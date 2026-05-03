@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0054)file:///C:/Users/owner/Downloads/my-goals-board_1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Goals Board</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="./My Goals Board_files/css2" rel="stylesheet">
 <style>
   :root {
     --bg: #F7F5F0;
@@ -285,9 +285,68 @@
   }
   #toast.show { opacity: 1; }
 
+  /* Check-in banner */
+  .checkin-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .checkin-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .checkin-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .checkin-msg {
+    font-size: 12.5px;
+    color: var(--text);
+  }
+  .checkin-msg strong { font-weight: 500; }
+  .checkin-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 1px;
+  }
+  .checkin-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .checkin-btn:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
+  .checkin-btn.checked { background: var(--accent-light); border-color: #C8DCB0; color: var(--accent); cursor: default; }
+  .streak-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #FDF0D5;
+    color: #7A4A00;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #F5D99A;
+  }
+
   @media (max-width: 700px) {
     header { padding: 14px 16px; }
     .vision-bar { padding: 10px 16px; }
+    .checkin-bar { padding: 10px 16px; }
     .filter-bar { padding: 10px 16px; }
     .board-wrap { padding: 14px 16px 32px; }
   }
@@ -312,6 +371,20 @@
   <div class="vision-text">Buy a larger home or multi-suite property with family · Rent out current townhome · Generate enough income to live comfortably and travel or work from home</div>
 </div>
 
+<div class="checkin-bar" id="checkin-bar">
+  <div class="checkin-left">
+    <div class="checkin-dot" id="checkin-dot" style="background: rgb(239, 159, 39);"></div>
+    <div>
+      <div class="checkin-msg" id="checkin-msg">Welcome back! <strong>Have you reviewed your goals today?</strong></div>
+      <div class="checkin-sub" id="checkin-sub">Take 2 minutes to look over your board and mark your check-in.</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div class="streak-pill" id="streak-pill">No streak yet</div>
+    <button class="checkin-btn" id="checkin-btn" onclick="markCheckin()">Mark check-in</button>
+  </div>
+</div>
+
 <div class="progress-wrap">
   <div class="progress-label">
     <span>Overall progress</span>
@@ -322,16 +395,132 @@
 
 <div class="filter-bar">
   <span class="filter-label">Show:</span>
-  <button class="filter-btn active" onclick="setFilter('all',this)">All goals</button>
-  <button class="filter-btn" onclick="setFilter('1',this)">Phase 1</button>
-  <button class="filter-btn" onclick="setFilter('2',this)">Phase 2</button>
-  <button class="filter-btn" onclick="setFilter('3',this)">Phase 3</button>
-  <button class="filter-btn" onclick="setFilter('earn',this)">Income potential</button>
+  <button class="filter-btn active" onclick="setFilter(&#39;all&#39;,this)">All goals</button>
+  <button class="filter-btn" onclick="setFilter(&#39;1&#39;,this)">Phase 1</button>
+  <button class="filter-btn" onclick="setFilter(&#39;2&#39;,this)">Phase 2</button>
+  <button class="filter-btn" onclick="setFilter(&#39;3&#39;,this)">Phase 3</button>
+  <button class="filter-btn" onclick="setFilter(&#39;earn&#39;,this)">Income potential</button>
   <button class="reset-btn" onclick="resetBoard()">Reset board</button>
 </div>
 
 <div class="board-wrap">
-  <div class="board" id="board"></div>
+  <div class="board" id="board"><div class="col" data-col="backlog">
+      <div class="col-header">
+        <div style="display:flex;align-items:center;">
+          <span class="col-dot" style="background:#888780"></span>
+          <span class="col-name">Backlog</span>
+        </div>
+        <span class="col-count" style="background:#F1EFE8;color:#5F5E5A">20</span>
+      </div>
+      <div class="col-body" id="body-backlog"><div class="card" draggable="true" data-id="c1">
+        <div class="card-title">Finish Bossified — complete task list, weekly/monthly/yearly tracker &amp; weight tracking</div>
+        <div class="card-tags"><span class="tag" style="background:#E0F0EA;color:#1B4D3E">Phase 1</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c2">
+        <div class="card-title">Add daily to-do list to Bossified</div>
+        <div class="card-tags"><span class="tag" style="background:#E0F0EA;color:#1B4D3E">Phase 1</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c3">
+        <div class="card-title">Revise weight tracking tab (weekly/monthly/yearly view)</div>
+        <div class="card-tags"><span class="tag" style="background:#E0F0EA;color:#1B4D3E">Phase 1</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c4">
+        <div class="card-title">Build a budget spreadsheet tracker to sell on Etsy</div>
+        <div class="card-tags"><span class="tag" style="background:#E0F0EA;color:#1B4D3E">Phase 1</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c5">
+        <div class="card-title">Clean up emails and laptop/cloud files</div>
+        <div class="card-tags"><span class="tag" style="background:#E0F0EA;color:#1B4D3E">Phase 1</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c6">
+        <div class="card-title">News digest app — world, Canadian, US, Mexican, business &amp; AI news daily</div>
+        <div class="card-tags"><span class="tag" style="background:#DDE9F7;color:#1A3A6B">Phase 2</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c7">
+        <div class="card-title">Food pantry app — fridge, freezers &amp; pantry stock with low-inventory alerts</div>
+        <div class="card-tags"><span class="tag" style="background:#DDE9F7;color:#1A3A6B">Phase 2</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c8">
+        <div class="card-title">Car maintenance app — oil changes, cleaning, service history log</div>
+        <div class="card-tags"><span class="tag" style="background:#DDE9F7;color:#1A3A6B">Phase 2</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c9">
+        <div class="card-title">Baking app — recipes, ingredient tracking, items to potentially sell</div>
+        <div class="card-tags"><span class="tag" style="background:#DDE9F7;color:#1A3A6B">Phase 2</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c10">
+        <div class="card-title">Health app — steps, workouts &amp; water consumption tracker</div>
+        <div class="card-tags"><span class="tag" style="background:#DDE9F7;color:#1A3A6B">Phase 2</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c11">
+        <div class="card-title">Book &amp; podcast recommendation tracker for business and personal growth</div>
+        <div class="card-tags"><span class="tag" style="background:#DDE9F7;color:#1A3A6B">Phase 2</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c12">
+        <div class="card-title">Research stock market basics and investing strategy</div>
+        <div class="card-tags"><span class="tag" style="background:#DDE9F7;color:#1A3A6B">Phase 2</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c13">
+        <div class="card-title">Deep cleaning house app with room-by-room schedules</div>
+        <div class="card-tags"><span class="tag" style="background:#EDE8F8;color:#4A2080">Phase 3</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c14">
+        <div class="card-title">Manifesting / vision board app</div>
+        <div class="card-tags"><span class="tag" style="background:#EDE8F8;color:#4A2080">Phase 3</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c15">
+        <div class="card-title">Gardening camera app — plant health diagnosis (water, sun, nutrients)</div>
+        <div class="card-tags"><span class="tag" style="background:#EDE8F8;color:#4A2080">Phase 3</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c16">
+        <div class="card-title">Self-esteem / positive self-talk app with daily affirmations</div>
+        <div class="card-tags"><span class="tag" style="background:#EDE8F8;color:#4A2080">Phase 3</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c17">
+        <div class="card-title">ADHD support app — focus tools and habit tracking</div>
+        <div class="card-tags"><span class="tag" style="background:#EDE8F8;color:#4A2080">Phase 3</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c18">
+        <div class="card-title">Learn website building, game development or architectural visualization</div>
+        <div class="card-tags"><span class="tag" style="background:#EDE8F8;color:#4A2080">Phase 3</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c19">
+        <div class="card-title">Research most profitable digital products to create and sell in 2026</div>
+        <div class="card-tags"><span class="tag" style="background:#EDE8F8;color:#4A2080">Phase 3</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div><div class="card" draggable="true" data-id="c20">
+        <div class="card-title">Launch Bossified on the App Store — pricing, ASO &amp; monetization strategy</div>
+        <div class="card-tags"><span class="tag" style="background:#EDE8F8;color:#4A2080">Phase 3</span><span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span></div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1"></textarea>
+      </div></div>
+    </div><div class="col" data-col="week">
+      <div class="col-header">
+        <div style="display:flex;align-items:center;">
+          <span class="col-dot" style="background:#378ADD"></span>
+          <span class="col-name">This week</span>
+        </div>
+        <span class="col-count" style="background:#DDE9F7;color:#1A3A6B">0</span>
+      </div>
+      <div class="col-body" id="body-week"><div class="col-empty">Drop cards here</div></div>
+    </div><div class="col" data-col="prog">
+      <div class="col-header">
+        <div style="display:flex;align-items:center;">
+          <span class="col-dot" style="background:#EF9F27"></span>
+          <span class="col-name">In progress</span>
+        </div>
+        <span class="col-count" style="background:#FDF0D5;color:#7A4A00">0</span>
+      </div>
+      <div class="col-body" id="body-prog"><div class="col-empty">Drop cards here</div></div>
+    </div><div class="col" data-col="done">
+      <div class="col-header">
+        <div style="display:flex;align-items:center;">
+          <span class="col-dot" style="background:#1D9E75"></span>
+          <span class="col-name">Done</span>
+        </div>
+        <span class="col-count" style="background:#E0F0EA;color:#1B4D3E">0</span>
+      </div>
+      <div class="col-body" id="body-done"><div class="col-empty">Drop cards here</div></div>
+    </div></div>
 </div>
 
 <div id="toast">Saved</div>
@@ -491,8 +680,90 @@ function handleDrop(targetCol) {
   saveState(); render();
 }
 
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+
+function daysBetween(d1, d2) {
+  return Math.round((new Date(d2) - new Date(d1)) / 86400000);
+}
+
+function loadCheckin() {
+  try {
+    const raw = localStorage.getItem('mygoals-checkin-v1');
+    return raw ? JSON.parse(raw) : { lastVisit: null, lastCheckin: null, streak: 0 };
+  } catch(e) { return { lastVisit: null, lastCheckin: null, streak: 0 }; }
+}
+
+function saveCheckin(data) {
+  try { localStorage.setItem('mygoals-checkin-v1', JSON.stringify(data)); } catch(e) {}
+}
+
+function markCheckin() {
+  const data = loadCheckin();
+  const today = todayStr();
+  if (data.lastCheckin === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+  data.streak = (data.lastCheckin === yesterday) ? (data.streak || 0) + 1 : 1;
+  data.lastCheckin = today;
+  saveCheckin(data);
+  renderCheckin();
+}
+
+function renderCheckin() {
+  const data = loadCheckin();
+  const today = todayStr();
+  const dot = document.getElementById('checkin-dot');
+  const msg = document.getElementById('checkin-msg');
+  const sub = document.getElementById('checkin-sub');
+  const btn = document.getElementById('checkin-btn');
+  const pill = document.getElementById('streak-pill');
+  const checkedToday = data.lastCheckin === today;
+  const streak = data.streak || 0;
+
+  if (!data.lastVisit || data.lastVisit === today) {
+    if (checkedToday) {
+      dot.style.background = '#1D9E75';
+      msg.innerHTML = '<strong>You\'ve checked in today!</strong> Great work staying on track.';
+      sub.textContent = 'Come back tomorrow to keep your streak going.';
+    } else {
+      dot.style.background = '#EF9F27';
+      msg.innerHTML = 'Welcome back! <strong>Have you reviewed your goals today?</strong>';
+      sub.textContent = 'Take 2 minutes to look over your board and mark your check-in.';
+    }
+  } else {
+    const days = daysBetween(data.lastVisit, today);
+    if (days === 1) {
+      dot.style.background = '#EF9F27';
+      msg.innerHTML = 'You haven\'t visited since <strong>yesterday</strong>.';
+      sub.textContent = 'Good time to check in and see where things stand!';
+    } else {
+      dot.style.background = '#E24B4A';
+      msg.innerHTML = `It's been <strong>${days} days</strong> since your last visit.`;
+      sub.textContent = 'No worries — every day is a fresh start. Take a look!';
+    }
+  }
+
+  if (checkedToday) {
+    btn.textContent = 'Checked in today';
+    btn.classList.add('checked');
+    btn.disabled = true;
+  } else {
+    btn.textContent = 'Mark check-in';
+    btn.classList.remove('checked');
+    btn.disabled = false;
+  }
+
+  pill.textContent = streak > 0 ? `${streak} day streak` : 'No streak yet';
+
+  data.lastVisit = today;
+  saveCheckin(data);
+}
+
 loadState();
 render();
+renderCheckin();
 </script>
-</body>
-</html>
+
+
+</body></html>
