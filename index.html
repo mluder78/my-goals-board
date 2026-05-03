@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Goals Board</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE6;
+    --border: #E0DDD6;
+    --border2: #CCCAB8;
+    --text: #1A1916;
+    --text2: #6B6860;
+    --text3: #9E9C96;
+    --accent: #2D5016;
+    --accent-light: #E8F0DF;
+    --accent-mid: #5A8A2E;
+    --ph1: #1B4D3E;
+    --ph1-bg: #E0F0EA;
+    --ph2: #1A3A6B;
+    --ph2-bg: #DDE9F7;
+    --ph3: #4A2080;
+    --ph3-bg: #EDE8F8;
+    --earn: #7A4A00;
+    --earn-bg: #FDF0D5;
+    --col-backlog: #1A1916;
+    --col-week: #1A3A6B;
+    --col-prog: #7A4A00;
+    --col-done: #1B4D3E;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* Header */
+  header {
+    background: var(--text);
+    color: #F7F5F0;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    color: #F7F5F0;
+  }
+  .header-left p {
+    font-size: 12px;
+    color: #9E9C96;
+    margin-top: 2px;
+  }
+  .header-stats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .hstat {
+    background: rgba(255,255,255,0.08);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-size: 12px;
+    color: #D0CEC8;
+  }
+  .hstat span {
+    color: #F7F5F0;
+    font-weight: 500;
+  }
+
+  /* Vision */
+  .vision-bar {
+    background: var(--accent-light);
+    border-bottom: 1px solid #C8DCB0;
+    padding: 12px 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .vision-label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .vision-text {
+    font-size: 13px;
+    color: var(--ph1);
+    line-height: 1.5;
+  }
+
+  /* Filter bar */
+  .filter-bar {
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 11px;
+    color: var(--text3);
+    margin-right: 4px;
+  }
+  .filter-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active { background: var(--text); color: #F7F5F0; border-color: var(--text); }
+  .reset-btn {
+    font-family: 'DM Sans', sans-serif;
+    margin-left: auto;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text3);
+    cursor: pointer;
+  }
+  .reset-btn:hover { color: #c0392b; border-color: #c0392b; }
+
+  /* Board */
+  .board-wrap { overflow-x: auto; padding: 20px 28px 40px; }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(220px, 1fr));
+    gap: 14px;
+    min-width: 900px;
+  }
+
+  /* Column */
+  .col {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .col-header {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .col-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 7px;
+    flex-shrink: 0;
+  }
+  .col-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .col-count {
+    font-size: 11px; font-weight: 500;
+    padding: 2px 8px; border-radius: 10px;
+  }
+  .col-body {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex: 1;
+    min-height: 60px;
+    transition: background 0.15s;
+  }
+  .col-body.drag-over {
+    background: #E8F0DF;
+    outline: 2px dashed #8BBF5A;
+    outline-offset: -4px;
+    border-radius: 6px;
+  }
+  .col-empty {
+    font-size: 12px;
+    color: var(--text3);
+    text-align: center;
+    padding: 18px 10px;
+    font-style: italic;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 11px;
+    cursor: grab;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .card:hover { border-color: var(--border2); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: 0.35; }
+  .card-title {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--text);
+    margin-bottom: 7px;
+  }
+  .col[data-col="done"] .card-title {
+    color: var(--text3);
+    text-decoration: line-through;
+  }
+  .card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 7px; }
+  .tag {
+    font-size: 10px; font-weight: 500;
+    padding: 2px 7px; border-radius: 8px;
+    white-space: nowrap;
+  }
+  .card-notes {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--text);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 5px 7px;
+    resize: none;
+    min-height: 32px;
+    line-height: 1.4;
+    transition: border-color 0.15s;
+  }
+  .card-notes:focus { outline: none; border-color: var(--accent-mid); }
+  .card-notes::placeholder { color: var(--text3); }
+
+  /* Progress bar */
+  .progress-wrap { padding: 10px 28px 0; }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--text3);
+    margin-bottom: 5px;
+  }
+  .progress-track {
+    height: 4px; background: var(--border);
+    border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent-mid);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* Save toast */
+  #toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--text); color: #F7F5F0;
+    padding: 9px 16px; border-radius: 8px;
+    font-size: 12px; opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  #toast.show { opacity: 1; }
+
+  @media (max-width: 700px) {
+    header { padding: 14px 16px; }
+    .vision-bar { padding: 10px 16px; }
+    .filter-bar { padding: 10px 16px; }
+    .board-wrap { padding: 14px 16px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>My Goals Board</h1>
+    <p>Drag cards to track your progress</p>
+  </div>
+  <div class="header-stats">
+    <div class="hstat"><span id="st-total">20</span> total goals</div>
+    <div class="hstat"><span id="st-done">0</span> completed</div>
+    <div class="hstat"><span id="st-earn">8</span> income opportunities</div>
+  </div>
+</header>
+
+<div class="vision-bar">
+  <div class="vision-label">North star</div>
+  <div class="vision-text">Buy a larger home or multi-suite property with family · Rent out current townhome · Generate enough income to live comfortably and travel or work from home</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>Overall progress</span>
+    <span id="prog-pct">0%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="filter-bar">
+  <span class="filter-label">Show:</span>
+  <button class="filter-btn active" onclick="setFilter('all',this)">All goals</button>
+  <button class="filter-btn" onclick="setFilter('1',this)">Phase 1</button>
+  <button class="filter-btn" onclick="setFilter('2',this)">Phase 2</button>
+  <button class="filter-btn" onclick="setFilter('3',this)">Phase 3</button>
+  <button class="filter-btn" onclick="setFilter('earn',this)">Income potential</button>
+  <button class="reset-btn" onclick="resetBoard()">Reset board</button>
+</div>
+
+<div class="board-wrap">
+  <div class="board" id="board"></div>
+</div>
+
+<div id="toast">Saved</div>
+
+<script>
+const COLS = [
+  { id:'backlog', name:'Backlog',      dot:'#888780', countBg:'#F1EFE8', countColor:'#5F5E5A' },
+  { id:'week',    name:'This week',    dot:'#378ADD', countBg:'#DDE9F7', countColor:'#1A3A6B' },
+  { id:'prog',    name:'In progress',  dot:'#EF9F27', countBg:'#FDF0D5', countColor:'#7A4A00' },
+  { id:'done',    name:'Done',         dot:'#1D9E75', countBg:'#E0F0EA', countColor:'#1B4D3E' },
+];
+
+const CARDS = [
+  { id:'c1',  title:'Finish Bossified — complete task list, weekly/monthly/yearly tracker & weight tracking', phase:1, earn:false },
+  { id:'c2',  title:'Add daily to-do list to Bossified', phase:1, earn:false },
+  { id:'c3',  title:'Revise weight tracking tab (weekly/monthly/yearly view)', phase:1, earn:false },
+  { id:'c4',  title:'Build a budget spreadsheet tracker to sell on Etsy', phase:1, earn:true },
+  { id:'c5',  title:'Clean up emails and laptop/cloud files', phase:1, earn:false },
+  { id:'c6',  title:'News digest app — world, Canadian, US, Mexican, business & AI news daily', phase:2, earn:true },
+  { id:'c7',  title:'Food pantry app — fridge, freezers & pantry stock with low-inventory alerts', phase:2, earn:true },
+  { id:'c8',  title:'Car maintenance app — oil changes, cleaning, service history log', phase:2, earn:false },
+  { id:'c9',  title:'Baking app — recipes, ingredient tracking, items to potentially sell', phase:2, earn:true },
+  { id:'c10', title:'Health app — steps, workouts & water consumption tracker', phase:2, earn:false },
+  { id:'c11', title:'Book & podcast recommendation tracker for business and personal growth', phase:2, earn:true },
+  { id:'c12', title:'Research stock market basics and investing strategy', phase:2, earn:false },
+  { id:'c13', title:'Deep cleaning house app with room-by-room schedules', phase:3, earn:true },
+  { id:'c14', title:'Manifesting / vision board app', phase:3, earn:true },
+  { id:'c15', title:'Gardening camera app — plant health diagnosis (water, sun, nutrients)', phase:3, earn:true },
+  { id:'c16', title:'Self-esteem / positive self-talk app with daily affirmations', phase:3, earn:false },
+  { id:'c17', title:'ADHD support app — focus tools and habit tracking', phase:3, earn:false },
+  { id:'c18', title:'Learn website building, game development or architectural visualization', phase:3, earn:true },
+  { id:'c19', title:'Research most profitable digital products to create and sell in 2026', phase:3, earn:true },
+  { id:'c20', title:'Launch Bossified on the App Store — pricing, ASO & monetization strategy', phase:3, earn:true },
+];
+
+const STORAGE = 'mygoals-board-v1';
+let state = { cols: {}, notes: {} };
+let dragId = null;
+let activeFilter = 'all';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE);
+    if (raw) state = JSON.parse(raw);
+  } catch(e) {}
+  if (!state.cols || !state.cols.backlog) {
+    state = { cols: { backlog: CARDS.map(c=>c.id), week:[], prog:[], done:[] }, notes:{} };
+  }
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE, JSON.stringify(state)); } catch(e) {}
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 1600);
+}
+
+function resetBoard() {
+  if (!confirm('Reset the board to its original state? Your notes and progress will be cleared.')) return;
+  state = { cols: { backlog: CARDS.map(c=>c.id), week:[], prog:[], done:[] }, notes:{} };
+  saveState(); render();
+}
+
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function cardVisible(card) {
+  if (activeFilter === 'all') return true;
+  if (activeFilter === 'earn') return card.earn;
+  return card.phase === parseInt(activeFilter);
+}
+
+function phaseTag(p) {
+  const map = {
+    1: { label:'Phase 1', bg:'#E0F0EA', color:'#1B4D3E' },
+    2: { label:'Phase 2', bg:'#DDE9F7', color:'#1A3A6B' },
+    3: { label:'Phase 3', bg:'#EDE8F8', color:'#4A2080' },
+  };
+  const s = map[p];
+  return `<span class="tag" style="background:${s.bg};color:${s.color}">${s.label}</span>`;
+}
+
+function earnTag() {
+  return `<span class="tag" style="background:#FDF0D5;color:#7A4A00">income</span>`;
+}
+
+function render() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  let doneCount = (state.cols.done||[]).length;
+  let total = CARDS.length;
+
+  COLS.forEach(col => {
+    const ids = (state.cols[col.id]||[]);
+    const visibleCards = ids.map(id=>CARDS.find(c=>c.id===id)).filter(c=>c && cardVisible(c));
+
+    const colEl = document.createElement('div');
+    colEl.className = 'col';
+    colEl.dataset.col = col.id;
+    colEl.innerHTML = `
+      <div class="col-header">
+        <div style="display:flex;align-items:center;">
+          <span class="col-dot" style="background:${col.dot}"></span>
+          <span class="col-name">${col.name}</span>
+        </div>
+        <span class="col-count" style="background:${col.countBg};color:${col.countColor}">${visibleCards.length}</span>
+      </div>
+      <div class="col-body" id="body-${col.id}"></div>
+    `;
+    board.appendChild(colEl);
+
+    const body = colEl.querySelector('.col-body');
+    body.addEventListener('dragover', e=>{ e.preventDefault(); body.classList.add('drag-over'); });
+    body.addEventListener('dragleave', ()=>body.classList.remove('drag-over'));
+    body.addEventListener('drop', e=>{ e.preventDefault(); body.classList.remove('drag-over'); handleDrop(col.id); });
+
+    if (visibleCards.length === 0) {
+      body.innerHTML = `<div class="col-empty">Drop cards here</div>`;
+    }
+
+    visibleCards.forEach(card => {
+      const note = state.notes[card.id] || '';
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.draggable = true;
+      el.dataset.id = card.id;
+      el.innerHTML = `
+        <div class="card-title">${card.title}</div>
+        <div class="card-tags">${phaseTag(card.phase)}${card.earn ? earnTag() : ''}</div>
+        <textarea class="card-notes" placeholder="Add a note..." rows="1">${note}</textarea>
+      `;
+      el.addEventListener('dragstart', ()=>{ dragId=card.id; setTimeout(()=>el.classList.add('dragging'),0); });
+      el.addEventListener('dragend', ()=>{ dragId=null; el.classList.remove('dragging'); });
+      const ta = el.querySelector('textarea');
+      ta.addEventListener('mousedown', e=>e.stopPropagation());
+      ta.addEventListener('input', ()=>{ state.notes[card.id]=ta.value; saveState(); });
+      body.appendChild(el);
+    });
+  });
+
+  // Stats
+  const pct = Math.round((doneCount / total) * 100);
+  document.getElementById('st-done').textContent = doneCount;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+}
+
+function handleDrop(targetCol) {
+  if (!dragId) return;
+  Object.keys(state.cols).forEach(k=>{ state.cols[k] = state.cols[k].filter(id=>id!==dragId); });
+  state.cols[targetCol].push(dragId);
+  saveState(); render();
+}
+
+loadState();
+render();
+</script>
+</body>
+</html>
